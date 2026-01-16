@@ -115,10 +115,10 @@ map_data = prepare_map_data()
 
 # Create bounding box polygon
 bbox = summary.get('bbox', {
-    'lat_min': 43.7,
-    'lat_max': 43.9,
-    'lon_min': -80.5,
-    'lon_max': -79.5
+    'lat_min': 43.481386,
+    'lat_max': 43.627526,
+    'lon_min': -80.333707,
+    'lon_max': -80.105133
 })
 
 bbox_polygon = pd.DataFrame([{
