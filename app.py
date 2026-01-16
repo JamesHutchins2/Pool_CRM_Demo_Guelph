@@ -80,26 +80,47 @@ def prepare_map_data():
     matched_curr = matched_current.copy()
     matched_curr['category'] = 'Currently Listed'
     matched_curr['color'] = [[255, 165, 0, 128]] * len(matched_curr)  # Orange, 50% opacity
-    matched_curr['tooltip'] = matched_curr.apply(
-        lambda row: f"{row['address_number']} {row['street_name']}<br>"
-                   f"Price: ${row['price']:,.0f}<br>"
-                   f"Beds: {row['bedrooms']} | Baths: {row['bathrooms']}<br>"
-                   f"LISTED", 
-        axis=1
-    )
+    
+    def create_current_tooltip(row):
+        try:
+            addr_num = row.get('address_number', 'N/A')
+            street = row.get('street_name', 'N/A')
+            price = row.get('price', 0)
+            beds = row.get('bedrooms', 'N/A')
+            baths = row.get('bathrooms', 'N/A')
+            
+            return (f"{addr_num} {street}<br>"
+                   f"Price: ${float(price):,.0f}<br>"
+                   f"Beds: {beds} | Baths: {baths}<br>"
+                   f"LISTED")
+        except:
+            return f"{row.get('address_number', 'N/A')} {row.get('street_name', 'N/A')}<br>LISTED"
+    
+    matched_curr['tooltip'] = matched_curr.apply(create_current_tooltip, axis=1)
     matched_curr['radius'] = 50
     
     # Matched removed listings (red, 100% opacity)
     matched_rem = matched_removed.copy()
     matched_rem['category'] = 'Recently Sold'
     matched_rem['color'] = [[220, 20, 60, 255]] * len(matched_rem)  # Crimson, 100% opacity
-    matched_rem['tooltip'] = matched_rem.apply(
-        lambda row: f"{row['address_number']} {row['street_name']}<br>"
-                   f"Last Price: ${row['price']:,.0f}<br>"
-                   f"Beds: {row['bedrooms']} | Baths: {row['bathrooms']}<br>"
-                   f"Sold: {row['removal_date'][:10]}", 
-        axis=1
-    )
+    
+    def create_removed_tooltip(row):
+        try:
+            addr_num = row.get('address_number', 'N/A')
+            street = row.get('street_name', 'N/A')
+            price = row.get('price', 0)
+            beds = row.get('bedrooms', 'N/A')
+            baths = row.get('bathrooms', 'N/A')
+            removal_date = str(row.get('removal_date', 'N/A'))[:10]
+            
+            return (f"{addr_num} {street}<br>"
+                   f"Last Price: ${float(price):,.0f}<br>"
+                   f"Beds: {beds} | Baths: {baths}<br>"
+                   f"Sold: {removal_date}")
+        except:
+            return f"{row.get('address_number', 'N/A')} {row.get('street_name', 'N/A')}<br>SOLD"
+    
+    matched_rem['tooltip'] = matched_rem.apply(create_removed_tooltip, axis=1)
     matched_rem['radius'] = 50
     
     # Combine all data
